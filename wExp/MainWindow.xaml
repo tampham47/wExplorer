@@ -1,0 +1,203 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:wExp="clr-namespace:wExp"
+        xmlns:ed="http://schemas.microsoft.com/expression/2010/drawing" x:Class="wExp.MainWindow"
+        Title="wExp" Height="466" Width="755" Icon="/wExp;component/Images/Graphite%20Desktop.png" KeyDown="Window_KeyDown">
+    <Window.Background>
+        <SolidColorBrush />
+    </Window.Background>
+    <Window.Resources>
+        <Style TargetType="{x:Type ListBox}">
+            <Setter Property="ItemsPanel">
+                <Setter.Value>
+                    <ItemsPanelTemplate>
+                        <WrapPanel />
+                    </ItemsPanelTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+        </Style>
+        <!--<Style TargetType="{x:Type Button}">
+            <Setter Property="BackGround">
+                <Setter.Value>
+                    <SolidColorBrush />
+                </Setter.Value>
+            </Setter>
+        </Style>-->
+        
+        <Style TargetType="{x:Type wExp:DirButton}">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <SolidColorBrush />
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        
+        <Style x:Key="ListBoxItemStyle" TargetType="{x:Type ListBoxItem}" >
+            <Setter Property="Background" Value="Black"/>
+            <Setter Property="Padding" Value="2,0,0,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <Border HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <StackPanel x:Name="ElementDisplay" Orientation="Vertical" Width="64" Height="96" Margin="4" MouseEnter="ElementDisplay_MouseEnter">
+                                <Image x:Name="img" Source="{Binding Icon}" Height="64" Width="64"/>
+                                <TextBlock VerticalAlignment="Center" Width="64" TextWrapping="Wrap" Text="{Binding Name}"/>
+                            </StackPanel>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+		<Button Name="buttonBack" HorizontalAlignment="Left" Height="24" VerticalAlignment="Top" Width="28" BorderBrush="{x:Null}" Background="Transparent" Click="buttonBack_Click">
+			<Image Width="20" Height="20" Source="/wExp;component/Images/back_alt.png"></Image>
+		</Button>
+			
+		<Button Name="buttonForward" HorizontalAlignment="Left" Height="24" VerticalAlignment="Top" Width="28" BorderBrush="{x:Null}" Background="Transparent" Margin="28,0,0,0" Click="buttonForward_Click">
+			<Image Width="20" Height="20" Source="/wExp;component/Images/forward_alt.png"></Image>
+		</Button>
+			
+        <Border HorizontalAlignment="Right" VerticalAlignment="Top" Width="186" Height="24" BorderBrush="Black">
+        	<Border.Background>
+        		<SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlLightColorKey}}" Opacity="0.5"/>
+        	</Border.Background>
+            <StackPanel Orientation="Horizontal">
+                <TextBox x:Name="textSearch" HorizontalAlignment="Stretch" Height="22" TextWrapping="Wrap" Text="Search" VerticalAlignment="Top" Width="162" Opacity="0.4" MouseEnter="textSearch_MouseEnter" MouseLeave="textSearch_MouseLeave" KeyDown="textSearch_KeyDown" BorderBrush="{x:Null}" Background="{x:Null}" Margin="1"/>
+                <Image Name="buttonSearchClose" Source="/wExp;component/Images/delete_24.png" Width="22" Height="22" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Hidden" MouseDown="buttonSearchClose_MouseDown" Margin="0,0,1,0" />
+            </StackPanel>
+        </Border>
+
+        <StackPanel x:Name="stackDirectory" Height="24" Margin="60,0,192,0" Orientation="Horizontal" VerticalAlignment="Top" Background="#509EA78F">
+            <!--<StackPanel.Resources>
+                <HierarchicalDataTemplate DataType="{x:Type wExp:TreeNode}">
+                </HierarchicalDataTemplate>
+            </StackPanel.Resources>
+
+            <StackPanel Orientation="Horizontal" Margin="58,3,194,408">
+                <Image Width="16" Height="16" Source="{Binding Icon}" />
+                <Button Content="{Binding Path}">
+                    <Button.Background>
+                        <SolidColorBrush />
+                    </Button.Background>
+                </Button>
+            </StackPanel>-->
+        </StackPanel>
+        
+        <TreeView HorizontalAlignment="Left" Width="236" x:Name="treeFolder" Margin="0,29,0,56" SelectedItemChanged="treeFolder_SelectedItemChanged">
+            <TreeView.Resources>
+                <HierarchicalDataTemplate DataType="{x:Type wExp:TreeNode}"  ItemsSource="{Binding Childs}">
+                    <StackPanel Name="treeFolderItem" Orientation="Horizontal" Margin="2" MouseDown="treeFolderItem_MouseDown">
+                        <Image Width="16" Height="16" Margin="3,0" Source="{Binding Icon}" />
+                        <TextBlock Text="{Binding Name}" />
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+            </TreeView.Resources>
+        </TreeView>
+        
+        <ListBox HorizontalAlignment="Stretch" Margin="236,29,0,56" x:Name="listExp" VerticalAlignment="Stretch"
+                 AllowDrop="True" SelectionChanged="listExp_SelectionChanged">
+            
+            <ListBox.Resources>
+                <HierarchicalDataTemplate DataType="{x:Type wExp:ElementDisplay}">
+                    <Border HorizontalAlignment="Center" VerticalAlignment="Center"
+                            BorderBrush="Black" 
+                            BorderThickness="1" 
+                            CornerRadius="3"
+                            Margin="6" MouseDown="Border_MouseDown">
+                        <StackPanel x:Name="ElementDisplay" Orientation="Vertical" Width="64" Height="96" Margin="4" MouseEnter="ElementDisplay_MouseEnter">
+                            <Image x:Name="img" Source="{Binding Icon}" Height="64" Width="64"/>
+                            <TextBlock VerticalAlignment="Center" Width="64" TextWrapping="Wrap" Text="{Binding Name}"/>
+                        </StackPanel>
+                    </Border>
+                </HierarchicalDataTemplate>
+            </ListBox.Resources>
+            
+            <ListBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Name="menuCopy" Header="Copy" Click="menuCopy_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/wExp;component/Images/document_16.png" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Name="menuPaste" Header="Paste" Click="menuPaste_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/wExp;component/Images/brush_16.png" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Name="menuDelete" Header="Delete" Click="menuDelete_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/wExp;component/Images/delete_16.png" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator></Separator>
+                    <MenuItem Name="menuNewFolder" Header="New Folder" Click="menuNewFolder_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/wExp;component/Images/folder_add_16.png" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator></Separator>
+                    <MenuItem Name="menuProperties" Header="Properties" Click="menuProperties_Click">
+                        <MenuItem.Icon >
+                            <Image Width="16" Height="16" Source="/wExp;component/Images/advanced.png" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </ContextMenu>
+            </ListBox.ContextMenu>
+        </ListBox>
+        
+        <StackPanel HorizontalAlignment="Left" x:Name="stackPanelInfo" VerticalAlignment="Bottom" Width="733" Background="#00000000" Height="56" Orientation="Horizontal">
+        	<StackPanel.Resources>
+        		<HierarchicalDataTemplate DataType="{x:Type wExp:DisplayInfo}"></HierarchicalDataTemplate>     	
+			</StackPanel.Resources>
+			
+        	<Image x:Name="buttonIconInfo" Height="55" Source="{Binding Icon}" Width="57" MouseDown="buttonIconInfo_MouseDown" HorizontalAlignment="Left"/>
+        	<StackPanel Orientation="Vertical">
+        		<TextBlock Margin="0,4" TextWrapping="Wrap" Text="{Binding Name}" Width="186"/>
+
+                <Button Name="buttonFavourite" Click="buttonFavourite_Click" BorderThickness="0" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" Visibility="Hidden">
+                    <Button.BorderBrush>
+                        <SolidColorBrush />
+                    </Button.BorderBrush>
+                    <Button.Background>
+                        <SolidColorBrush />
+                    </Button.Background>
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Width="16" Height="16" Source="/wExp;component/Image/favourite.png" />
+                            <TextBlock Name="favouriteText" Text=" Favourite this!"/>
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+                <!--<Button Name="buttonFilter" Click="buttonFilter_Click" BorderThickness="0" HorizontalContentAlignment="Left" VerticalContentAlignment="Center">
+                    <Button.BorderBrush>
+                        <SolidColorBrush />
+                    </Button.BorderBrush>
+                    <Button.Background>
+                        <SolidColorBrush />
+                    </Button.Background>
+                    <TextBlock Text="{Binding Extension}"/>
+                </Button>-->
+        		     	
+			</StackPanel>
+			<StackPanel Orientation="Vertical">
+        		<TextBlock Margin="0,4" TextWrapping="Wrap" Text="{Binding DateModified}" Width="186"/>
+                
+            </StackPanel>
+        </StackPanel>
+        <!--<ListBox Height="24" HorizontalAlignment="Left" Margin="60,0,0,0" Name="listBoxDir" VerticalAlignment="Top" Width="479">
+            <ListBox.Resources>
+                
+                <HierarchicalDataTemplate DataType="{x:Type wExp:ElementDisplay}">
+                    <Button Content="{Binding Name}"/>
+                </HierarchicalDataTemplate>
+            </ListBox.Resources>
+
+        </ListBox>-->
+        
+    </Grid>
+</Window>
